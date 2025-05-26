@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Maize\CloudfrontCookies\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class CloudfrontCookiesCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-cloudfront-cookies';
 
     public $description = 'My command';
 
