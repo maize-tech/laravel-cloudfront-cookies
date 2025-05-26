@@ -2,9 +2,9 @@
 
 namespace Maize\CloudfrontCookies;
 
+use Maize\CloudfrontCookies\Commands\CloudfrontCookiesCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Maize\CloudfrontCookies\Commands\CloudfrontCookiesCommand;
 
 class CloudfrontCookiesServiceProvider extends PackageServiceProvider
 {

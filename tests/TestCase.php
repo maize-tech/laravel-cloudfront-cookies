@@ -3,8 +3,8 @@
 namespace Maize\CloudfrontCookies\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Maize\CloudfrontCookies\CloudfrontCookiesServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
