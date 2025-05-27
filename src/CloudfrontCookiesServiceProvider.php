@@ -3,6 +3,7 @@
 namespace Maize\CloudfrontCookies;
 
 use Aws\CloudFront\CloudFrontClient;
+use Maize\CloudfrontCookies\Support\Config;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -17,11 +18,11 @@ class CloudfrontCookiesServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->app->singleton(CloudFrontClient::class, function () {
-            return new CloudFrontClient([
-                'version' => config('cloudfront.version'),
-                'region' => config('cloudfront.region'),
-            ]);
-        });
+        $this->app->singleton(CloudFrontClient::class, fn () => (
+            new CloudFrontClient([
+                'version' => Config::getVersion(),
+                'region' => Config::getRegion(),
+            ])
+        ));
     }
 }

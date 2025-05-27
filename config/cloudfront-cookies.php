@@ -5,18 +5,9 @@ return [
 
     'region' => null,
 
-    'public_key_path' => null,
+    'resource_key' => null,
 
-    'private_key_path' => null,
+    'private_key' => null,
 
-    // 'domain' => null,
-
-    // 'resource' => null,
-
-    // 'cookies_expiration' => [
-    //     'unit' => \Carbon\CarbonInterval::PERIOD_DAYS,
-    //     'value' => 2,
-    // ],
-
-    // 'cookies_domain' => null,
+    'key_pair_id' => null,
 ];
