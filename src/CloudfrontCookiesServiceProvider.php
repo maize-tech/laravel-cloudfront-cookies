@@ -14,7 +14,7 @@ class CloudfrontCookiesServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-cloudfront-cookies')
             ->hasConfigFile();
-            
+
     }
 
     public function packageBooted(): void
