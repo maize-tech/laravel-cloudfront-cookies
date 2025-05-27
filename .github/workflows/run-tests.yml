@@ -33,7 +33,7 @@ jobs:
             testbench: 8.*
         exclude:
           - laravel: 10.*
-            php: 8.3
+            php: [8.4, 8.3]
     
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
