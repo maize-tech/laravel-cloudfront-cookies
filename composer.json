@@ -40,8 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Maize\\CloudfrontCookies\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/"
+            "Maize\\CloudfrontCookies\\Tests\\": "tests/"
         }
     },
     "scripts": {
