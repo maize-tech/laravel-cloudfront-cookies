@@ -27,9 +27,11 @@ class CloudfrontCookies
     {
         $cookies = $this->make();
 
-        EncryptCookies::except(
-            array_keys($cookies)
-        );
+        if (method_exists(EncryptCookies::class, 'except')) {
+            EncryptCookies::except(
+                array_keys($cookies)
+            );
+        }
 
         $host = request()->host(); // TODO
 
