@@ -19,7 +19,7 @@ class CloudfrontCookies
             'private_key' => Config::getPrivateKey(),
             'expires' => Config::getExpires(),
             'key_pair_id' => Config::getKeyPairId(),
-            'policy' => static::getPolicy(),
+            'policy' => $this->getPolicy(),
         ]);
     }
 
@@ -47,7 +47,7 @@ class CloudfrontCookies
         }
     }
 
-    private static function getPolicy(): string
+    private function getPolicy(): string
     {
         return json_encode([
             'Statement' => [

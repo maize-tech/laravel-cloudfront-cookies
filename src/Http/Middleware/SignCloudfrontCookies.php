@@ -2,17 +2,12 @@
 
 namespace Maize\CloudfrontCookies\Http\Middleware;
 
-use Aws\CloudFront\CloudFrontClient;
 use Closure;
 use Illuminate\Http\Request;
 use Maize\CloudfrontCookies\Facades\CloudfrontCookies;
 
 class SignCloudfrontCookies
 {
-    public function __construct(
-        private CloudFrontClient $client
-    ) {}
-
     /**
      * Handle an incoming request.
      *
