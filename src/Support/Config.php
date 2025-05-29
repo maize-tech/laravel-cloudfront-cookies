@@ -28,18 +28,30 @@ class Config
 
     public static function getPrivateKey(): string
     {
-        return throw_unless(
+        $key = throw_unless(
             config('cloudfront-cookies.private_key'),
             Exception::class
         );
+
+        if (file_exists($key) && is_readable($key)) {
+            return file_get_contents($key);
+        }
+
+        return $key;
     }
 
     public static function getKeyPairId(): string
     {
-        return throw_unless(
+        $key = throw_unless(
             config('cloudfront-cookies.key_pair_id'),
             Exception::class
         );
+
+        if (file_exists($key) && is_readable($key)) {
+            return file_get_contents($key);
+        }
+
+        return $key;
     }
 
     public static function getExpires()
