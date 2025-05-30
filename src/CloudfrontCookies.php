@@ -49,22 +49,17 @@ class CloudfrontCookies
 
     private function getPolicy(): string
     {
-        $resourceKey = Config::getResourceKey();
-        $expires = Config::getExpires();
-
-        return '{"Statement":[{"Resource":"'.$resourceKey.'","Condition":{"DateLessThan":{"AWS:EpochTime":'.$expires.'}}}]}';
-
-        // return json_encode([
-        //     'Statement' => [
-        //         [
-        //             'Resource' => Config::getResourceKey(),
-        //             'Condition' => [
-        //                 'DateLessThan' => [
-        //                     'AWS:EpochTime' => Config::getExpires(),
-        //                 ],
-        //             ],
-        //         ],
-        //     ],
-        // ]);
+        return json_encode([
+            'Statement' => [
+                [
+                    'Resource' => Config::getResourceKey(),
+                    'Condition' => [
+                        'DateLessThan' => [
+                            'AWS:EpochTime' => Config::getExpires(),
+                        ],
+                    ],
+                ],
+            ],
+        ]);
     }
 }
