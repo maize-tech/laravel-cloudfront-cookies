@@ -37,16 +37,10 @@ class Config
 
     public static function getPrivateKey(): string
     {
-        $key = throw_unless(
+        return throw_unless(
             config('cloudfront-cookies.private_key'),
             Exception::class
         );
-
-        if (file_exists($key) && is_readable($key)) {
-            return file_get_contents($key);
-        }
-
-        return $key;
     }
 
     public static function getKeyPairId(): string
