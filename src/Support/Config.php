@@ -26,6 +26,15 @@ class Config
         );
     }
 
+    public static function getCookieDomain(): string
+    {
+        // TODO: Starts with .
+        return throw_unless(
+            config('cloudfront-cookies.cookie_domain'),
+            Exception::class
+        );
+    }
+
     public static function getPrivateKey(): string
     {
         $key = throw_unless(

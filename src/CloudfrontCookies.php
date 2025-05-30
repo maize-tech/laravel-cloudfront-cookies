@@ -33,8 +33,6 @@ class CloudfrontCookies
             );
         }
 
-        $host = request()->host(); // TODO
-
         foreach ($cookies as $name => $value) {
 
             // TODO
@@ -43,7 +41,7 @@ class CloudfrontCookies
                 value: $value,
                 minutes: 60 * 24 * 30,
                 path: '/',
-                domain: ".{$host}",
+                domain: Config::getCookieDomain(),
                 secure: true,
             );
         }
@@ -51,17 +49,22 @@ class CloudfrontCookies
 
     private function getPolicy(): string
     {
-        return json_encode([
-            'Statement' => [
-                [
-                    'Resource' => Config::getResourceKey(),
-                    'Condition' => [
-                        'DateLessThan' => [
-                            'AWS:EpochTime' => Config::getExpires(),
-                        ],
-                    ],
-                ],
-            ],
-        ]);
+        $resourceKey = Config::getResourceKey();
+        $expires = Config::getExpires();
+
+        return '{"Statement":[{"Resource":"'.$resourceKey.'","Condition":{"DateLessThan":{"AWS:EpochTime":'.$expires.'}}}]}';
+
+        // return json_encode([
+        //     'Statement' => [
+        //         [
+        //             'Resource' => Config::getResourceKey(),
+        //             'Condition' => [
+        //                 'DateLessThan' => [
+        //                     'AWS:EpochTime' => Config::getExpires(),
+        //                 ],
+        //             ],
+        //         ],
+        //     ],
+        // ]);
     }
 }
