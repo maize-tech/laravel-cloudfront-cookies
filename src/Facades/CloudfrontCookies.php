@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array make()
  * @method static void queue()
+ * @method static void clear()
  *
  * @see \Maize\CloudfrontCookies\CloudfrontCookies
  */

@@ -5,6 +5,7 @@ namespace Maize\CloudfrontCookies\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Maize\CloudfrontCookies\Facades\CloudfrontCookies;
+use Maize\CloudfrontCookies\Support\Config;
 
 class SignCloudfrontCookies
 {
@@ -16,17 +17,16 @@ class SignCloudfrontCookies
      */
     public function handle(Request $request, Closure $next)
     {
-        // if (! app()->environment('production')) {
-        //     return $next($request);
-        // }
+        // Check if CloudFront cookies are enabled
+        if (! Config::isEnabled()) {
+            return $next($request);
+        }
 
-        // if (! auth()?->check()) { // TODO
-        //     return $next($request);
-        // }
-
-        // check Middleware SignCloudfrontCookies
-
-        CloudfrontCookies::queue();
+        // Only set cookies for authenticated users
+        $guard = Config::getGuard();
+        if (auth($guard)->check()) {
+            CloudfrontCookies::queue();
+        }
 
         return $next($request);
     }

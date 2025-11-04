@@ -1,19 +1,11 @@
-# This is my package laravel-cloudfront-cookies
+# Laravel CloudFront Cookies
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/maize-tech/laravel-cloudfront-cookies.svg?style=flat-square)](https://packagist.org/packages/maize-tech/laravel-cloudfront-cookies)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/maize-tech/laravel-cloudfront-cookies/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/maize-tech/laravel-cloudfront-cookies/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/maize-tech/laravel-cloudfront-cookies/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/maize-tech/laravel-cloudfront-cookies/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/maize-tech/laravel-cloudfront-cookies.svg?style=flat-square)](https://packagist.org/packages/maize-tech/laravel-cloudfront-cookies)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-cloudfront-cookies.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-cloudfront-cookies)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+A Laravel package to easily manage AWS CloudFront signed cookies for authenticated users. This package automatically generates and manages CloudFront signed cookies, allowing you to restrict access to your CloudFront distributions based on user authentication status. Cookies are automatically set for authenticated users and cleared on logout.
 
 ## Installation
 
@@ -23,37 +15,169 @@ You can install the package via composer:
 composer require maize-tech/laravel-cloudfront-cookies
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-cloudfront-cookies-migrations"
-php artisan migrate
-```
-
 You can publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="laravel-cloudfront-cookies-config"
 ```
 
+Or use the install command:
+
+```bash
+php artisan cloudfront-cookies:install
+```
+
 This is the contents of the published config file:
 
 ```php
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | CloudFront API Version
+    |--------------------------------------------------------------------------
+    |
+    | The version of the CloudFront API to use. Use 'latest' for the most
+    | recent version or specify a specific version like '2020-05-31'.
+    | Default: 'latest'
+    |
+    */
+    'version' => env('CLOUDFRONT_VERSION'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | AWS Region
+    |--------------------------------------------------------------------------
+    |
+    | The AWS region where your CloudFront distribution is configured.
+    | CloudFront is a global service but requires a region for API calls.
+    | Default: 'us-east-1'
+    |
+    */
+    'region' => env('CLOUDFRONT_REGION'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resource Key
+    |--------------------------------------------------------------------------
+    |
+    | The CloudFront resource URL pattern that the signed cookies will grant
+    | access to. This should match your CloudFront distribution URL pattern.
+    | Example: 'https://d111111abcdef8.cloudfront.net/*'
+    |
+    */
+    'resource_key' => env('CLOUDFRONT_RESOURCE_KEY'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cookie Domain
+    |--------------------------------------------------------------------------
+    |
+    | The domain for which the signed cookies will be valid. This should
+    | start with a dot (.) to include all subdomains.
+    | Example: '.example.com' or '.cloudfront.net'
+    |
+    */
+    'cookie_domain' => env('CLOUDFRONT_COOKIE_DOMAIN'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Private Key
+    |--------------------------------------------------------------------------
+    |
+    | The CloudFront private key used to sign the cookies. This should be
+    | the full PEM-encoded private key content.
+    |
+    */
+    'private_key' => env('CLOUDFRONT_PRIVATE_KEY'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Key Pair ID
+    |--------------------------------------------------------------------------
+    |
+    | The ID of the CloudFront key pair associated with your private key.
+    | You can find this in the AWS CloudFront console.
+    |
+    */
+    'key_pair_id' => env('CLOUDFRONT_KEY_PAIR_ID'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Expiration Interval
+    |--------------------------------------------------------------------------
+    |
+    | The duration for which both the signed cookie policy and browser cookies
+    | will be valid. This value is used for both CloudFront policy expiration
+    | and browser cookie duration.
+    |
+    | Accepts:
+    | - String: human-readable format like '1 hour', '30 minutes', '1 day'
+    | - DateInterval: PHP DateInterval instance
+    | - CarbonInterval: Carbon interval instance
+    |
+    | Default: '1 minutes'
+    |
+    | Examples:
+    | - '30 days'
+    | - '1 week'
+    | - '2 hours'
+    | - '45 minutes'
+    | - CarbonInterval::make(30, Unit::Day)
+    | - CarbonInterval::days(30)
+    | - new DateInterval('P30D')
+    |
+    */
+    'expiration_interval' => env('CLOUDFRONT_EXPIRATION_INTERVAL'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enabled
+    |--------------------------------------------------------------------------
+    |
+    | Enable or disable CloudFront signed cookies. When disabled, cookies will
+    | not be set even if the middleware is active.
+    |
+    | Default: true
+    |
+    */
+    'enabled' => env('CLOUDFRONT_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Guard
+    |--------------------------------------------------------------------------
+    |
+    | The authentication guard to use when checking if a user is authenticated
+    | before setting CloudFront cookies. Set to null to use the default guard.
+    |
+    | Default: null (uses default guard)
+    |
+    */
+    'guard' => env('CLOUDFRONT_GUARD'),
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-cloudfront-cookies-views"
 ```
 
 ## Usage
 
+Add the `SignCloudfrontCookies` middleware to your routes or route groups:
+
 ```php
-$cloudfrontCookies = new Maize\CloudfrontCookies();
-echo $cloudfrontCookies->echoPhrase('Hello, Maize!');
+use Maize\CloudfrontCookies\Http\Middleware\SignCloudfrontCookies;
+
+Route::middleware(['auth', SignCloudfrontCookies::class])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+});
+```
+
+**Note for Laravel versions prior to 11**: You need to manually exclude CloudFront cookies from encryption. Add the following to your `app/Http/Middleware/EncryptCookies.php`:
+
+```php
+protected $except = [
+    'CloudFront-Policy',
+    'CloudFront-Signature',
+    'CloudFront-Key-Pair-Id',
+];
 ```
 
 ## Testing

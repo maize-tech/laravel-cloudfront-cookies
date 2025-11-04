@@ -17,7 +17,7 @@ class CloudfrontCookies
     {
         return $this->client->getSignedCookie([
             'private_key' => Config::getPrivateKey(),
-            'expires' => Config::getExpires(),
+            'expires' => Config::getExpiresAt(),
             'key_pair_id' => Config::getKeyPairId(),
             'policy' => $this->getPolicy(),
         ]);
@@ -27,6 +27,7 @@ class CloudfrontCookies
     {
         $cookies = $this->make();
 
+        /** @phpstan-ignore-next-line function.alreadyNarrowedType */
         if (method_exists(EncryptCookies::class, 'except')) {
             EncryptCookies::except(
                 array_keys($cookies)
@@ -34,12 +35,35 @@ class CloudfrontCookies
         }
 
         foreach ($cookies as $name => $value) {
-
-            // TODO
             Cookie::queue(
                 name: $name,
                 value: $value,
-                minutes: 60 * 24 * 30,
+                minutes: Config::getCookieDuration(),
+                path: '/',
+                domain: Config::getCookieDomain(),
+                secure: true,
+            );
+        }
+    }
+
+    public function clear(): void
+    {
+        $cookieNames = [
+            'CloudFront-Policy',
+            'CloudFront-Signature',
+            'CloudFront-Key-Pair-Id',
+        ];
+
+        /** @phpstan-ignore-next-line function.alreadyNarrowedType */
+        if (method_exists(EncryptCookies::class, 'except')) {
+            EncryptCookies::except($cookieNames);
+        }
+
+        foreach ($cookieNames as $name) {
+            Cookie::queue(
+                name: $name,
+                value: '',
+                minutes: -2628000, // -5 years to ensure deletion
                 path: '/',
                 domain: Config::getCookieDomain(),
                 secure: true,
@@ -55,7 +79,7 @@ class CloudfrontCookies
                     'Resource' => Config::getResourceKey(),
                     'Condition' => [
                         'DateLessThan' => [
-                            'AWS:EpochTime' => Config::getExpires(),
+                            'AWS:EpochTime' => Config::getExpiresAt(),
                         ],
                     ],
                 ],

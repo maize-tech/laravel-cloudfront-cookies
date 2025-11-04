@@ -3,6 +3,9 @@
 namespace Maize\CloudfrontCookies;
 
 use Aws\CloudFront\CloudFrontClient;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Event;
+use Maize\CloudfrontCookies\Listeners\ClearCloudfrontCookiesOnLogout;
 use Maize\CloudfrontCookies\Support\Config;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -30,5 +33,11 @@ class CloudfrontCookiesServiceProvider extends PackageServiceProvider
                 'region' => Config::getRegion(),
             ])
         ));
+
+        // Register logout event listener
+        Event::listen(
+            Logout::class,
+            ClearCloudfrontCookiesOnLogout::class
+        );
     }
 }

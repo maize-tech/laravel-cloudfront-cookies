@@ -2,20 +2,21 @@
 
 namespace Maize\CloudfrontCookies\Support;
 
+use Carbon\CarbonInterval;
+use DateInterval;
 use Exception;
+use InvalidArgumentException;
 
 class Config
 {
     public static function getVersion(): string
     {
-        return config('cloudfront-cookies.version')
-            ?? 'latest';
+        return config('cloudfront-cookies.version') ?? 'latest';
     }
 
     public static function getRegion(): string
     {
-        return config('cloudfront-cookies.region')
-            ?? 'us-east-1';
+        return config('cloudfront-cookies.region') ?? 'us-east-1';
     }
 
     public static function getResourceKey(): string
@@ -51,8 +52,46 @@ class Config
         );
     }
 
-    public static function getExpires()
+    private static function getExpirationInterval(): CarbonInterval
     {
-        return time() + 3000;
+        $expiration = config('cloudfront-cookies.expiration_interval');
+
+        if (blank($expiration)) {
+            return CarbonInterval::make('1 minutes');
+        }
+
+        if (is_string($expiration) || $expiration instanceof DateInterval) {
+            return CarbonInterval::make($expiration);
+        }
+
+        throw new InvalidArgumentException;
+    }
+
+    public static function getExpiresAt(): int
+    {
+        return now()->add(
+            self::getExpirationInterval()
+        )->timestamp;
+    }
+
+    public static function getCookieDuration(): int
+    {
+        return (int) self::getExpirationInterval()->totalMinutes;
+    }
+
+    public static function isEnabled(): bool
+    {
+        $enabled = config('cloudfront-cookies.enabled');
+
+        if ($enabled === null) {
+            return true;
+        }
+
+        return (bool) $enabled;
+    }
+
+    public static function getGuard(): ?string
+    {
+        return config('cloudfront-cookies.guard');
     }
 }
