@@ -33,15 +33,28 @@ This is the contents of the published config file:
 return [
     /*
     |--------------------------------------------------------------------------
+    | Enabled
+    |--------------------------------------------------------------------------
+    |
+    | Enable or disable CloudFront signed cookies. When disabled, cookies will
+    | not be set even if the middleware is active.
+    |
+    | Default: true
+    |
+    */
+    'enabled' => env('CLOUDFRONT_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | CloudFront API Version
     |--------------------------------------------------------------------------
     |
     | The version of the CloudFront API to use. Use 'latest' for the most
-    | recent version or specify a specific version like '2020-05-31'.
+    | recent version.
     | Default: 'latest'
     |
     */
-    'version' => env('CLOUDFRONT_VERSION'),
+    'version' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +66,7 @@ return [
     | Default: 'us-east-1'
     |
     */
-    'region' => env('CLOUDFRONT_REGION'),
+    'region' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -74,7 +87,7 @@ return [
     |
     | The domain for which the signed cookies will be valid. This should
     | start with a dot (.) to include all subdomains.
-    | Example: '.example.com' or '.cloudfront.net'
+    | Example: '.example.com'
     |
     */
     'cookie_domain' => env('CLOUDFRONT_COOKIE_DOMAIN'),
@@ -84,8 +97,7 @@ return [
     | Private Key
     |--------------------------------------------------------------------------
     |
-    | The CloudFront private key used to sign the cookies. This should be
-    | the full PEM-encoded private key content.
+    | The CloudFront private key used to sign the cookies.
     |
     */
     'private_key' => env('CLOUDFRONT_PRIVATE_KEY'),
@@ -96,7 +108,6 @@ return [
     |--------------------------------------------------------------------------
     |
     | The ID of the CloudFront key pair associated with your private key.
-    | You can find this in the AWS CloudFront console.
     |
     */
     'key_pair_id' => env('CLOUDFRONT_KEY_PAIR_ID'),
@@ -117,30 +128,8 @@ return [
     |
     | Default: '1 minutes'
     |
-    | Examples:
-    | - '30 days'
-    | - '1 week'
-    | - '2 hours'
-    | - '45 minutes'
-    | - CarbonInterval::make(30, Unit::Day)
-    | - CarbonInterval::days(30)
-    | - new DateInterval('P30D')
-    |
     */
-    'expiration_interval' => env('CLOUDFRONT_EXPIRATION_INTERVAL'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Enabled
-    |--------------------------------------------------------------------------
-    |
-    | Enable or disable CloudFront signed cookies. When disabled, cookies will
-    | not be set even if the middleware is active.
-    |
-    | Default: true
-    |
-    */
-    'enabled' => env('CLOUDFRONT_ENABLED', true),
+    'expiration_interval' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -153,7 +142,7 @@ return [
     | Default: null (uses default guard)
     |
     */
-    'guard' => env('CLOUDFRONT_GUARD'),
+    'guard' => null,
 ];
 ```
 
