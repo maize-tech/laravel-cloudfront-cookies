@@ -115,10 +115,10 @@ describe('Config isEnabled', function () {
         expect(Config::isEnabled())->toBe(false);
     });
 
-    it('returns true by default when not configured', function () {
+    it('returns false by default when not configured', function () {
         config()->set('cloudfront-cookies.enabled', null);
 
-        expect(Config::isEnabled())->toBe(true);
+        expect(Config::isEnabled())->toBe(false);
     });
 });
 

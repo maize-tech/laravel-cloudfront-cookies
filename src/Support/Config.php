@@ -9,6 +9,25 @@ use InvalidArgumentException;
 
 class Config
 {
+    public static function isEnabled(): bool
+    {
+        $enabled = config('cloudfront-cookies.enabled');
+
+        if ($enabled === true) {
+            return true;
+        }
+
+        if (trim($enabled) === 'true') {
+            return true;
+        }
+
+        if (trim($enabled) === '1') {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function getVersion(): string
     {
         return config('cloudfront-cookies.version') ?? 'latest';
@@ -76,17 +95,6 @@ class Config
     public static function getCookieDuration(): int
     {
         return (int) self::getExpirationInterval()->totalMinutes;
-    }
-
-    public static function isEnabled(): bool
-    {
-        $enabled = config('cloudfront-cookies.enabled');
-
-        if ($enabled === null) {
-            return true;
-        }
-
-        return (bool) $enabled;
     }
 
     public static function getGuard(): ?string

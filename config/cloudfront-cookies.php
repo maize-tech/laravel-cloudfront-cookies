@@ -9,10 +9,10 @@ return [
     | Enable or disable CloudFront signed cookies. When disabled, cookies will
     | not be set even if the middleware is active.
     |
-    | Default: true
+    | Default: false
     |
     */
-    'enabled' => env('CLOUDFRONT_ENABLED', true),
+    'enabled' => env('CLOUDFRONT_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------
