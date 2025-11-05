@@ -56,10 +56,13 @@ class Config
 
     public static function getPrivateKey(): string
     {
-        return throw_unless(
-            config('cloudfront-cookies.private_key'),
-            Exception::class
-        );
+        $keyPath = config('cloudfront-cookies.private_key') ?? storage_path('cloudfront-private.key');
+
+        if (! file_exists($keyPath)) {
+            throw new Exception("Private key file not found at: {$keyPath}");
+        }
+
+        return $keyPath;
     }
 
     public static function getKeyPairId(): string

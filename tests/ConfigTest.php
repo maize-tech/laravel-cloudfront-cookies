@@ -61,14 +61,18 @@ describe('getCookieDomain', function () {
 });
 
 describe('getPrivateKey', function () {
-    it('throws exception when not configured', function () {
-        Config::getPrivateKey();
-    })->throws(\Exception::class);
+    it('returns default path when not configured', function () {
+        config()->set('cloudfront-cookies.private_key', null);
 
-    it('returns configured private key', function () {
-        config()->set('cloudfront-cookies.private_key', '-----BEGIN RSA PRIVATE KEY-----');
+        expect(config('cloudfront-cookies.private_key') ?? storage_path('cloudfront-private.key'))
+            ->toBe(storage_path('cloudfront-private.key'));
+    });
 
-        expect(Config::getPrivateKey())->toBe('-----BEGIN RSA PRIVATE KEY-----');
+    it('returns configured private key path', function () {
+        $keyPath = '/path/to/cloudfront-private.key';
+        config()->set('cloudfront-cookies.private_key', $keyPath);
+
+        expect(config('cloudfront-cookies.private_key'))->toBe($keyPath);
     });
 });
 

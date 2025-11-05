@@ -10,7 +10,7 @@ beforeEach(function () {
     config()->set('cloudfront-cookies.enabled', true);
     config()->set('cloudfront-cookies.resource_key', 'https://d111111abcdef8.cloudfront.net/*');
     config()->set('cloudfront-cookies.cookie_domain', '.example.com');
-    config()->set('cloudfront-cookies.private_key', '-----BEGIN RSA PRIVATE KEY-----');
+    config()->set('cloudfront-cookies.private_key', '/path/to/cloudfront-private.key');
     config()->set('cloudfront-cookies.key_pair_id', 'APKAEXAMPLE');
 });
 
