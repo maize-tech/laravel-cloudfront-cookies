@@ -15,13 +15,7 @@ You can install the package via composer:
 composer require maize-tech/laravel-cloudfront-cookies
 ```
 
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="laravel-cloudfront-cookies-config"
-```
-
-Or use the install command:
+You can install and configure the package with:
 
 ```bash
 php artisan cloudfront-cookies:install
@@ -155,6 +149,85 @@ return [
     */
     'guard' => null,
 ];
+```
+
+## AWS CloudFront Setup
+
+Before using this package, you need to configure AWS CloudFront with signed cookies. This guide assumes you already have an S3 bucket with your assets and a domain name hosted on the internet.
+
+### 1. Generate Public and Private Keys
+
+Create a new RSA private key:
+
+```bash
+openssl genrsa -out cloudfront-private.key 2048
+```
+
+Extract the public key:
+
+```bash
+openssl rsa -pubout -in cloudfront-private.key -out cloudfront-public.key
+```
+
+**Important**: Store the `cloudfront-private.key` file in your Laravel application's `storage` directory. This is the default location the package looks for the private key.
+
+### 2. Create a CloudFront Key Group
+
+1. Go to the AWS CloudFront console
+2. Navigate to **Key management** > **Public keys**
+3. Click **Create public key**
+4. Give it a name (e.g., "My App Public Key")
+5. Paste the content of `cloudfront-public.key`
+6. Save and note down the **Key ID** (you'll need this for `CLOUDFRONT_KEY_PAIR_ID`)
+7. Navigate to **Key groups** and create a new key group
+8. Add the public key you just created to this key group
+
+### 3. Create a CloudFront Distribution
+
+**Important**: Your CloudFront distribution must use the same root domain as your application. For example, if your application is at `example.com`, your CloudFront domain should be something like `assets.example.com` or `cdn.example.com`. This is necessary because cookies can only be set for domains you own.
+
+1. Go to the CloudFront console and click **Create distribution**
+2. Under **Origin domain**, select your S3 bucket with the assets
+3. Under **Default cache behavior**:
+   - Set **Restrict viewer access** to **Yes**
+   - Select the key group you created earlier
+4. Under **Settings**:
+   - Add your custom SSL certificate (e.g., `*.example.com`)
+   - Under **Alternate domain name (CNAME)**, add your CloudFront domain (e.g., `cdn.example.com`)
+5. Create the distribution (this may take 10-15 minutes to deploy)
+6. Note down the **Distribution domain name** (e.g., `d1234abcd.cloudfront.net`) and the full CloudFront URL (e.g., `https://d1234abcd.cloudfront.net/*`)
+
+### 4. Configure Route 53 DNS
+
+1. Go to Route 53 and select your hosted zone
+2. Click **Create record**
+3. Set the record name to match your CloudFront CNAME (e.g., `cdn`)
+4. Enable the **Alias** toggle
+5. Select **CloudFront distribution** as the alias target
+6. Select your distribution from the dropdown
+7. Create the record
+
+If you don't see your distribution in the dropdown, you can use a CNAME record type instead and use the CloudFront domain name as the value.
+
+### 5. Update S3 Bucket CORS Policy
+
+1. Go to your S3 bucket
+2. Navigate to the **Permissions** tab
+3. Scroll to the **Cross-origin resource sharing (CORS)** section
+4. Update the policy (replace `example.com` and `cdn.example.com` with your domains):
+
+```json
+[
+    {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "HEAD"],
+        "AllowedOrigins": [
+            "https://example.com",
+            "https://cdn.example.com"
+        ],
+        "ExposeHeaders": ["ETag"]
+    }
+]
 ```
 
 ## Usage
