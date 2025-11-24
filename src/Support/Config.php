@@ -101,16 +101,16 @@ class Config
         return (int) self::getExpirationInterval()->totalMinutes;
     }
 
-    public static function getGuards(): ?array
+    public static function getGuards(): array
     {
-        $gurads = config('cloudfront-cookies.guards');
+        $guards = config('cloudfront-cookies.guards');
 
-        if (blank($gurads)) {
-            return null;
+        if (blank($guards)) {
+            return [null];
         }
 
-        if (is_string($gurads) || is_array($gurads)) {
-            return Arr::wrap($gurads);
+        if (is_string($guards) || is_array($guards)) {
+            return Arr::wrap($guards);
         }
 
         throw new InvalidArgumentException;

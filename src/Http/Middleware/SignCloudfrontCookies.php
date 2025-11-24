@@ -23,7 +23,7 @@ class SignCloudfrontCookies
 
         $guards = Config::getGuards();
         $isAuthenticated = collect($guards)
-            ->contains(fn (string $guard) => (
+            ->contains(fn (?string $guard) => (
                 auth($guard)->check()
             ));
 

@@ -79,7 +79,7 @@ describe('SignCloudfrontCookies middleware', function () {
 
     it('uses custom guard when configured', function () {
         config()->set('cloudfront-cookies.enabled', true);
-        config()->set('cloudfront-cookies.guard', 'api');
+        config()->set('cloudfront-cookies.guards', ['api']);
 
         Auth::shouldReceive('guard')
             ->with('api')
@@ -122,14 +122,20 @@ describe('Config isEnabled', function () {
     });
 });
 
-describe('Config getGuard', function () {
-    it('returns null when not configured', function () {
-        expect(Config::getGuard())->toBeNull();
+describe('Config getGuards', function () {
+    it('returns array with null when not configured', function () {
+        expect(Config::getGuards())->toBe([null]);
     });
 
-    it('returns configured guard', function () {
-        config()->set('cloudfront-cookies.guard', 'api');
+    it('returns configured guards as array', function () {
+        config()->set('cloudfront-cookies.guards', ['api']);
 
-        expect(Config::getGuard())->toBe('api');
+        expect(Config::getGuards())->toBe(['api']);
+    });
+
+    it('wraps string guard into array', function () {
+        config()->set('cloudfront-cookies.guards', 'api');
+
+        expect(Config::getGuards())->toBe(['api']);
     });
 });
