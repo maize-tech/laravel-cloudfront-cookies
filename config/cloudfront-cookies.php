@@ -113,15 +113,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Guard
+    | Authentication Guards
     |--------------------------------------------------------------------------
     |
-    | The authentication guard to use when checking if a user is authenticated
+    | The authentication guards to use when checking if a user is authenticated
     | before setting CloudFront cookies.
     | If not set, the package will use the default authentication guard.
     |
     | You can override this by setting a specific guard name (e.g., 'api').
     |
     */
-    'guard' => null,
+    'guards' => [],
 ];

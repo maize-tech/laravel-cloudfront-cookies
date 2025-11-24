@@ -63,7 +63,7 @@ class CloudfrontCookies
             Cookie::queue(
                 name: $name,
                 value: '',
-                minutes: -2628000, // -5 years to ensure deletion
+                minutes: -2628000,
                 path: '/',
                 domain: Config::getCookieDomain(),
                 secure: true,

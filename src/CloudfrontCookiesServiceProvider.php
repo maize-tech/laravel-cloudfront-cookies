@@ -34,7 +34,6 @@ class CloudfrontCookiesServiceProvider extends PackageServiceProvider
             ])
         ));
 
-        // Register logout event listener
         Event::listen(
             Logout::class,
             ClearCloudfrontCookiesOnLogout::class

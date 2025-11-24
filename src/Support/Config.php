@@ -5,6 +5,7 @@ namespace Maize\CloudfrontCookies\Support;
 use Carbon\CarbonInterval;
 use DateInterval;
 use Exception;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
 class Config
@@ -100,8 +101,18 @@ class Config
         return (int) self::getExpirationInterval()->totalMinutes;
     }
 
-    public static function getGuard(): ?string
+    public static function getGuards(): ?array
     {
-        return config('cloudfront-cookies.guard');
+        $gurads = config('cloudfront-cookies.guards');
+
+        if (blank($gurads)) {
+            return null;
+        }
+
+        if (is_string($gurads) || is_array($gurads)) {
+            return Arr::wrap($gurads);
+        }
+
+        throw new InvalidArgumentException;
     }
 }

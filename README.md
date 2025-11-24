@@ -147,7 +147,7 @@ return [
     | You can override this by setting a specific guard name (e.g., 'api').
     |
     */
-    'guard' => null,
+    'guards' => [],
 ];
 ```
 

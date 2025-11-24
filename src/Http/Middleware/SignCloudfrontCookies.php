@@ -17,14 +17,17 @@ class SignCloudfrontCookies
      */
     public function handle(Request $request, Closure $next)
     {
-        // Check if CloudFront cookies are enabled
         if (! Config::isEnabled()) {
             return $next($request);
         }
 
-        // Only set cookies for authenticated users
-        $guard = Config::getGuard();
-        if (auth($guard)->check()) {
+        $guards = Config::getGuards();
+        $isAuthenticated = collect($guards)
+            ->contains(fn (string $guard) => (
+                auth($guard)->check()
+            ));
+
+        if ($isAuthenticated) {
             CloudfrontCookies::queue();
         }
 
