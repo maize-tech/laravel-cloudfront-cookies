@@ -20,7 +20,7 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        Route::middleware([SignCloudfrontCookies::class]) // [CloudfrontSignedCookiesMiddleware::class, AddQueuedCookiesToResponse::class]
+        Route::middleware([SignCloudfrontCookies::class])
             ->get('/', fn () => 'ok');
     }
 }
