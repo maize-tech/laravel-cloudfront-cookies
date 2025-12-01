@@ -29,9 +29,23 @@ describe('CloudfrontCookies clear', function () {
 });
 
 describe('ClearCloudfrontCookiesOnLogout listener', function () {
-    it('calls clear method on logout event', function () {
+    it('calls clear method on logout event when enabled', function () {
+        config()->set('cloudfront-cookies.enabled', true);
+
         CloudfrontCookies::shouldReceive('clear')
             ->once();
+
+        $listener = new ClearCloudfrontCookiesOnLogout;
+        $event = new Logout('web', (object) ['id' => 1]);
+
+        $listener->handle($event);
+    });
+
+    it('does not call clear method on logout event when disabled', function () {
+        config()->set('cloudfront-cookies.enabled', false);
+
+        CloudfrontCookies::shouldReceive('clear')
+            ->never();
 
         $listener = new ClearCloudfrontCookiesOnLogout;
         $event = new Logout('web', (object) ['id' => 1]);

@@ -4,6 +4,7 @@ namespace Maize\CloudfrontCookies\Listeners;
 
 use Illuminate\Auth\Events\Logout;
 use Maize\CloudfrontCookies\Facades\CloudfrontCookies;
+use Maize\CloudfrontCookies\Support\Config;
 
 class ClearCloudfrontCookiesOnLogout
 {
@@ -12,6 +13,8 @@ class ClearCloudfrontCookiesOnLogout
      */
     public function handle(Logout $event): void
     {
-        CloudfrontCookies::clear();
+        if (Config::isEnabled()) {
+            CloudfrontCookies::clear();
+        }
     }
 }
