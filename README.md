@@ -197,7 +197,16 @@ openssl rsa -pubout -in cloudfront-private.key -out cloudfront-public.key
 5. Create the distribution (this may take 10-15 minutes to deploy)
 6. Note down the **Distribution domain name** (e.g., `d1234abcd.cloudfront.net`) and the full CloudFront URL (e.g., `https://d1234abcd.cloudfront.net/*`)
 
-### 4. Configure Route 53 DNS
+### 4. Configure DNS
+
+Access your domain name's provider DNS panel and create a CNAME record pointing
+to your ClouFront distribution, i.e.:
+
+```
+d1234abcd.cloudfront.net. CNAME cdn.example.com.
+```
+
+If you are using AWS Route 53, follow these steps:
 
 1. Go to Route 53 and select your hosted zone
 2. Click **Create record**
@@ -229,6 +238,9 @@ If you don't see your distribution in the dropdown, you can use a CNAME record t
     }
 ]
 ```
+
+Make sure to protect your bucket by seleting "Block all public access" under
+"Permissions".
 
 ## Usage
 
